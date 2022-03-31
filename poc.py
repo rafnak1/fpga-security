@@ -27,14 +27,12 @@ client.username_pw_set(user, passwd)
 client.connect(Broker, Port, KeepAlive)
 client.loop_start()
 
-# Teste de publish
-print("publicando")
+print("Teste de publish")
 # Primeiro publish é geralmente ignorado
 client.publish(user + "/asdf", payload="1", qos=0, retain=False)
 client.publish(user + "/asdf", payload="1", qos=0, retain=False)
 
-# Teste de percepção de mudanças no tópico
-print("listening...")
+print("Teste de percepção de mudanças no tópico")
 time.sleep(10)
 
 client.loop_stop()
