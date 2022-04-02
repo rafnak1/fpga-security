@@ -14,24 +14,24 @@ KeepAlive = 60
 
 # 7 entradas
 in_var2topic = {
-    'com0'   : 'S0',
-    'com1'   : 'S1',
-    'com2'   : 'S2',
-    'com3'   : 'S3',
-    'trig'   : 'S4',
-    'alarme' : 'S5',
-    'abriu'  : 'S6'}
+    "com0"   : "S0",
+    "com1"   : "S1",
+    "com2"   : "S2",
+    "com3"   : "S3",
+    "trig"   : "S4",
+    "alarme" : "S5",
+    "abriu"  : "S6"}
 
 # 8 saídas
 out_var2topic = {
-    'BDnormal0' : 'E0',
-    'BDnormal1' : 'E1',
-    'BDnormal2' : 'E2',
-    'BDnormal3' : 'E3',
-    'BDpanico0' : 'E4',
-    'BDpanico1' : 'E5',
-    'BDpanico2' : 'E6',
-    'BDpanico3' : 'E7'}
+    "BDnormal0" : "E0",
+    "BDnormal1" : "E1",
+    "BDnormal2" : "E2",
+    "BDnormal3" : "E3",
+    "BDpanico0" : "E4",
+    "BDpanico1" : "E5",
+    "BDpanico2" : "E6",
+    "BDpanico3" : "E7"}
 
 
 # Dados das senhas
@@ -100,12 +100,9 @@ def on_message(client, userdata, msg):
 
     print(msg.topic+" "+str(msg.payload))
 
-    if msg.topic = user+"/"+in_var2topic['com0']: com[0] = msg.payload == b'1'
-    if msg.topic = user+"/"+in_var2topic['com1']: com[1] = msg.payload == b'1'
-    if msg.topic = user+"/"+in_var2topic['com2']: com[2] = msg.payload == b'1'
-    if msg.topic = user+"/"+in_var2topic['com3']: com[3] = msg.payload == b'1'
+    for s,i in zip(["0","1","2","3"], [3,2,1,0])
+        if msg.topic = user+"/"+in_var2topic["com"+s]: com[i] = msg.payload == b'1'
 
-    # Sinais internos
     ID = 0
 
     # Procedimento desencadeado pelo trig
