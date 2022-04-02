@@ -100,8 +100,8 @@ def on_message(client, userdata, msg):
 
     print(msg.topic+" "+str(msg.payload))
 
-    for s,i in zip(["0","1","2","3"], [3,2,1,0])
-        if msg.topic = user+"/"+in_var2topic["com"+s]: com[i] = msg.payload == b'1'
+    for s,i in zip(["0","1","2","3"], [3,2,1,0]):
+        if msg.topic == user+"/"+in_var2topic["com"+s]: com[i] = msg.payload == b'1'
 
     ID = 0
 
@@ -112,11 +112,11 @@ def on_message(client, userdata, msg):
 
         out = int2bin(sizeN[ID] - 1)
         for s, i in zip(["0","1","2","3"], [3,2,1,0]):
-            client.publish(user+"/"out_var2topic["BDnormal"+s], payload=str(int(out[i])), qos=0, retain=False)
+            client.publish(user+"/"+out_var2topic["BDnormal"+s], payload=str(int(out[i])), qos=0, retain=False)
 
         out = int2bin(sizeP[ID] - 1)
         for s, i in zip(["0","1","2","3"], [3,2,1,0]):
-            client.publish(user+"/"out_var2topic["BDpanico"+s], payload=str(int(out[i])), qos=0, retain=False)
+            client.publish(user+"/"+out_var2topic["BDpanico"+s], payload=str(int(out[i])), qos=0, retain=False)
 
         time.sleep(1.1)
 
@@ -124,11 +124,11 @@ def on_message(client, userdata, msg):
 
             out = BDn[i_d]
             for s, i in zip(["0","1","2","3"], [3,2,1,0]):
-                client.publish(user+"/"out_var2topic["BDnormal"+s], payload=str(int(out[i])), qos=0, retain=False)
+                client.publish(user+"/"+out_var2topic["BDnormal"+s], payload=str(int(out[i])), qos=0, retain=False)
 
             out = BDp[i_d]
             for s, i in zip(["0","1","2","3"], [3,2,1,0]):
-                client.publish(user+"/"out_var2topic["BDpanico"+s], payload=str(int(out[i])), qos=0, retain=False)
+                client.publish(user+"/"+out_var2topic["BDpanico"+s], payload=str(int(out[i])), qos=0, retain=False)
 
             time.sleep(1.1)
 
