@@ -1,3 +1,7 @@
+# Nota: aqui, vetores de bits são representados da seguinte maneira:
+# [True, False, True, False] convertido para inteiro unsigned ficaria
+# 10, não 5.
+
 import paho.mqtt.client as mqtt
 import time
 
@@ -8,53 +12,128 @@ Broker = "labdigi.wiseful.com.br"
 Port = 80
 KeepAlive = 60
 
-# tópicos temporários!
-var2topic = {
-    # 7 entradas
+# 7 entradas
+in_var2topic = {
     'com0'   : 'S0',
     'com1'   : 'S1',
     'com2'   : 'S2',
     'com3'   : 'S3',
     'trig'   : 'S4',
     'alarme' : 'S5',
-    'abriu'  : 'S6',
-    # 8 saídas
-    'BDnormal0' : 'E0'
-}
+    'abriu'  : 'S6'}
 
+# 8 saídas
+out_var2topic = {
+    'BDnormal0' : 'E0',
+    'BDnormal1' : 'E1',
+    'BDnormal2' : 'E2',
+    'BDnormal3' : 'E3',
+    'BDpanico0' : 'E4',
+    'BDpanico1' : 'E5',
+    'BDpanico2' : 'E6',
+    'BDpanico3' : 'E7'}
+
+
+# Dados das senhas
+BDn = [[False, False, False, False], # Matrix 16x4 bits
+       [False, False, False, False],
+       [False, False, False, False],
+       [False, False, False, False],
+       [False, False, False, False],
+       [False, False, False, False],
+       [False, False, False, False],
+       [False, False, False, False],
+       [False, False, False, False],
+       [False, False, False, False],
+       [False, False, False, False],
+       [False, False, False, False],
+       [False, False, False, False],
+       [False, False, False, False],
+       [False, False, False, False],
+       [False, False, False, False],]
+
+BDp = [[False, False, False, False], # Matrix 16x4 bits
+       [False, False, False, False],
+       [False, False, False, False],
+       [False, False, False, False],
+       [False, False, False, False],
+       [False, False, False, False],
+       [False, False, False, False],
+       [False, False, False, False],
+       [False, False, False, False],
+       [False, False, False, False],
+       [False, False, False, False],
+       [False, False, False, False],
+       [False, False, False, False],
+       [False, False, False, False],
+       [False, False, False, False],
+       [False, False, False, False],]
+
+sizeN = sum([any(d) for d in BDn])
+sizeP = sum([any(d) for d in BDp])
+
+
+# entrada com: única variável global
+com = [False for i in range(4)]
+
+# 10 -> [True, False, True, False]
+def int2bin(n):
+    r = []
+    for p in [8, 4, 2, 1]:
+        r.append(bool(n // p))
+        n %= p
+    return r
 
 def on_connect(client, userdata, flags, rc):
     global in_var2topic
+
     print("Conectado com codigo " + str(rc))
-    client.subscribe(user+"/asdf", qos=0)
+
+    client.subscribe(user+"/asdf", qos=0)  # Teste de conexão
+
     for topic in in_var2topic.values:
         client.subscribe(user+"/"+topic, qos=0)
 
+
 def on_message(client, userdata, msg):
-    global in_var2topic, user
+    global in_var2topic, out_var2topic, user, com, BDn, BDp, sizeN, sizeP
+
     print(msg.topic+" "+str(msg.payload))
 
-    com = [False for i in range(4)]
-    if msg.topic = user+"/S0":
-        com[0] = msg.payload == b'1'
-    if msg.topic = user+"/S1":
-        com[1] = msg.payload == b'1'
-    if msg.topic = user+"/S2":
-        com[2] = msg.payload == b'1'
-    if msg.topic = user+"/S3":
-        com[3] = msg.payload == b'1'
+    if msg.topic = user+"/"+in_var2topic['com0']: com[0] = msg.payload == b'1'
+    if msg.topic = user+"/"+in_var2topic['com1']: com[1] = msg.payload == b'1'
+    if msg.topic = user+"/"+in_var2topic['com2']: com[2] = msg.payload == b'1'
+    if msg.topic = user+"/"+in_var2topic['com3']: com[3] = msg.payload == b'1'
 
     # Sinais internos
     ID = 0
-    BDn = [[False for j in range(4)] for i in range(16)]
-    BDp = [[False for j in range(4)] for i in range(16)]
-    sizeN = [0 for _ in range(16)]
-    sizeP = [0 for _ in range(16)]
 
-    if msg.topic == user+"/trig" and msg.payload == '1':
-        ID = sum([com[i]*2**i for i in range(3, -1, -1)])
-        publish4()
+    # Procedimento desencadeado pelo trig
+    if msg.topic == user+"/"+in_var2topic['trig'] and msg.payload == b'1':
 
+        ID = sum([com[i]*2**(3-i) for i in range(4)])
+
+        out = int2bin(sizeN[ID] - 1)
+        for s, i in zip(["0","1","2","3"], [3,2,1,0]):
+            client.publish(user+"/"out_var2topic["BDnormal"+s], payload=str(int(out[i])), qos=0, retain=False)
+
+        out = int2bin(sizeP[ID] - 1)
+        for s, i in zip(["0","1","2","3"], [3,2,1,0]):
+            client.publish(user+"/"out_var2topic["BDpanico"+s], payload=str(int(out[i])), qos=0, retain=False)
+
+        time.sleep(1.1)
+
+        for i_d in range( max(sizeN[ID], sizeP[ID]) ):
+
+            out = BDn[i_d]
+            for s, i in zip(["0","1","2","3"], [3,2,1,0]):
+                client.publish(user+"/"out_var2topic["BDnormal"+s], payload=str(int(out[i])), qos=0, retain=False)
+
+            out = BDp[i_d]
+            for s, i in zip(["0","1","2","3"], [3,2,1,0]):
+                client.publish(user+"/"out_var2topic["BDpanico"+s], payload=str(int(out[i])), qos=0, retain=False)
+
+            time.sleep(1.1)
 
 client = mqtt.Client(protocol=mqtt.MQTTv31)
 client.on_connect = on_connect
