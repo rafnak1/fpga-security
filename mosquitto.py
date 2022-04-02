@@ -2,7 +2,7 @@
 import paho.mqtt.client as mqtt
 import time
 
-user = ""
+user = "grupo2-bancadaA2"
 passwd = ""
 
 Broker = "test.mosquitto.org"
@@ -29,11 +29,20 @@ client.connect(Broker, Port, KeepAlive)
 client.loop_start()
 
 # Primeiro publish é geralmente ignorado
+print("publish")
 client.publish(user + "/asdf", payload="1", qos=0, retain=False)
+time.sleep(1)
 
 print("Servidor iniciou")
-while (True):
-    pass
+
+for i in range(11):
+    print("publish")
+    for u in range(8):
+        client.publish(user + "/S"+str(u), payload=str(i%2), qos=0, retain=False)
+    time.sleep(1)
+
+
+time.sleep(1000)
 
 client.loop_stop()
 client.disconnect()
