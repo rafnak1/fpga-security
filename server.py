@@ -3,7 +3,7 @@
 # 10, não 5.
 
 import paho.mqtt.client as mqtt
-import time
+import time, persistencia, senhas
 
 user = "grupo2-bancadaA2"
 
@@ -42,42 +42,7 @@ out_var2topic = {
 
 
 # Dados das senhas
-BDn = [[ True, False, False, False], # Matrix 16x4 bits
-       [False, True , False, False],
-       [False, False, False, False],
-       [False, False, False, False],
-       [False, False, False, False],
-       [False, False, False, False],
-       [False, False, False, False],
-       [False, False, False, False],
-       [False, False, False, False],
-       [False, False, False, False],
-       [False, False, False, False],
-       [False, False, False, False],
-       [False, False, False, False],
-       [False, False, False, False],
-       [False, False, False, False],
-       [False, False, False, False],]
 
-BDp = [[False, False,  True, False], # Matrix 16x4 bits
-       [False, False, False,  True],
-       [False, False, False,  True],
-       [False, False, False, False],
-       [False, False, False, False],
-       [False, False, False, False],
-       [False, False, False, False],
-       [False, False, False, False],
-       [False, False, False, False],
-       [False, False, False, False],
-       [False, False, False, False],
-       [False, False, False, False],
-       [False, False, False, False],
-       [False, False, False, False],
-       [False, False, False, False],
-       [False, False, False, False],]
-
-sizeN = sum([any(d) for d in BDn])
-sizeP = sum([any(d) for d in BDp])
 
 
 # variáveis globais
@@ -115,6 +80,12 @@ def on_message(client, userdata, msg):
     if (msg.topic == user+"/"+in_var2topic['trig']) and (msg.payload == b'1'):
         trigger = True
 
+    if (msg.topic == user+"/"+in_var2topic['abriu']) and (msg.payload == b'1'):
+        persistencia.abriu()
+
+    if (msg.topic == user+"/"+in_var2topic['alarme']) and (msg.payload == b'1'):
+        persistencia.alarme()
+
 
 client = mqtt.Client(protocol=mqtt.MQTTv31)
 client.on_connect = on_connect
@@ -134,7 +105,14 @@ while True:
     time.sleep(.05)
     if trigger == True:
         ID = sum([com[i]*2**(3-i) for i in range(4)])
+        persistencia.userid(ID)
         print("ID = "+str(ID))
+
+        BDn = senhas.get_senha_normal(ID)
+        BDp = senhas.get_senha_panico(ID)
+
+        sizeN = sum([any(d) for d in BDn])
+        sizeP = sum([any(d) for d in BDp])
 
         print("publicando 1")
 
@@ -162,13 +140,6 @@ while True:
 
             time.sleep(DELAY)
 
-        # Limpa os canais
-    #        for s in zip(["0","1","2","3"]):
-    #            client.publish(user+"/"+out_var2topic["BDnormal"+s], payload="0", qos=0, retain=False)
-    #
-    #        for s in zip(["0","1","2","3"]):
-    #            client.publish(user+"/"+out_var2topic["BDpanico"+s], payload="0", qos=0, retain=False)
-        
         trigger = False
         print("fim do procedimento")
 
