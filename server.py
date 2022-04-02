@@ -35,8 +35,8 @@ out_var2topic = {
 
 
 # Dados das senhas
-BDn = [[False, False, False, False], # Matrix 16x4 bits
-       [False, False, False, False],
+BDn = [[ True, False, False, False], # Matrix 16x4 bits
+       [False, True , False, False],
        [False, False, False, False],
        [False, False, False, False],
        [False, False, False, False],
@@ -52,9 +52,9 @@ BDn = [[False, False, False, False], # Matrix 16x4 bits
        [False, False, False, False],
        [False, False, False, False],]
 
-BDp = [[False, False, False, False], # Matrix 16x4 bits
-       [False, False, False, False],
-       [False, False, False, False],
+BDp = [[False, False,  True, False], # Matrix 16x4 bits
+       [False, False, False,  True],
+       [False, False, False,  True],
        [False, False, False, False],
        [False, False, False, False],
        [False, False, False, False],
