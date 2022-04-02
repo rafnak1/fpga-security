@@ -7,13 +7,13 @@ import time, logger, senhas
 
 user = "grupo2-bancadaA2"
 
-#passwd = "L@Bdygy2A2"
-passwd = ""
+passwd = "L@Bdygy2A2"
+#passwd = ""
 
-#Broker = "labdigi.wiseful.com.br"
-#Port = 80
-Broker = "test.mosquitto.org"
-Port = 1883
+Broker = "labdigi.wiseful.com.br"
+Port = 80
+#Broker = "test.mosquitto.org"
+#Port = 1883
 
 KeepAlive = 60
 
@@ -39,10 +39,6 @@ out_var2topic = {
     "BDpanico1" : "E5",
     "BDpanico2" : "E6",
     "BDpanico3" : "E7"}
-
-
-# Dados das senhas
-
 
 
 # variáveis globais
