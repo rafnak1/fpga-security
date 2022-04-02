@@ -3,7 +3,7 @@
 # 10, não 5.
 
 import paho.mqtt.client as mqtt
-import time, persistencia, senhas
+import time, logger, senhas
 
 user = "grupo2-bancadaA2"
 
@@ -81,10 +81,10 @@ def on_message(client, userdata, msg):
         trigger = True
 
     if (msg.topic == user+"/"+in_var2topic['abriu']) and (msg.payload == b'1'):
-        persistencia.abriu()
+        logger.abriu()
 
     if (msg.topic == user+"/"+in_var2topic['alarme']) and (msg.payload == b'1'):
-        persistencia.alarme()
+        logger.alarme()
 
 
 client = mqtt.Client(protocol=mqtt.MQTTv31)
@@ -105,7 +105,7 @@ while True:
     time.sleep(.05)
     if trigger == True:
         ID = sum([com[i]*2**(3-i) for i in range(4)])
-        persistencia.userid(ID)
+        logger.userid(ID)
         print("ID = "+str(ID))
 
         BDn = senhas.get_senha_normal(ID)
