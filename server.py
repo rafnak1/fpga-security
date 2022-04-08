@@ -27,7 +27,8 @@ in_var2topic = {
     "com3"   : "S3",
     "trig"   : "S4",
     "alarme" : "S5",
-    "abriu"  : "S6"}
+    "abriu"  : "S6",
+    "fimES"  : "S7"}
 
 # 8 saídas
 out_var2topic = {
@@ -44,6 +45,7 @@ out_var2topic = {
 # variáveis globais
 com = [False for i in range(4)]
 trigger = False
+fimES = False
 
 
 # 10 -> [True, False, True, False]
@@ -66,7 +68,7 @@ def on_connect(client, userdata, flags, rc):
 
 
 def on_message(client, userdata, msg):
-    global in_var2topic, out_var2topic, user, com, BDn, BDp, sizeN, sizeP, DELAY, trigger
+    global in_var2topic, out_var2topic, user, com, BDn, BDp, sizeN, sizeP, DELAY, trigger, fimES
 
     print(msg.topic+" "+str(msg.payload))
 
@@ -80,7 +82,9 @@ def on_message(client, userdata, msg):
         logger.abriu()
 
     if (msg.topic == user+"/"+in_var2topic['alarme']) and (msg.payload == b'1'):
-        logger.alarme()
+        logger.alarme(fimES)
+
+    if msg.topic == user+"/"+in_var2topic["fimES"]: fimES = msg.payload == b'1'
 
 
 client = mqtt.Client(protocol=mqtt.MQTTv31)
